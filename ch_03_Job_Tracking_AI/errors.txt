@@ -1,0 +1,21 @@
+﻿src/components/AddJobModal.tsx(2,10): error TS1484: 'JobStatus' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/AddJobModal.tsx(2,21): error TS1484: 'JobPriority' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/AddJobModal.tsx(2,34): error TS1484: 'AppType' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/Analytics.tsx(2,61): error TS6133: 'BarChart' is declared but its value is never read.
+src/components/Analytics.tsx(2,71): error TS6133: 'Bar' is declared but its value is never read.
+src/components/Analytics.tsx(2,76): error TS6133: 'XAxis' is declared but its value is never read.
+src/components/Analytics.tsx(2,83): error TS6133: 'YAxis' is declared but its value is never read.
+src/components/Analytics.tsx(3,10): error TS1484: 'JobStatus' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/Column.tsx(3,10): error TS1484: 'Job' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/Column.tsx(3,15): error TS1484: 'JobStatus' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/Header.tsx(1,28): error TS6133: 'LineChart' is declared but its value is never read.
+src/components/Header.tsx(1,39): error TS6133: 'LayoutDashboard' is declared but its value is never read.
+src/components/JobCard.tsx(3,10): error TS1484: 'Job' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/KanbanBoard.tsx(9,3): error TS1484: 'DragEndEvent' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/KanbanBoard.tsx(10,3): error TS1484: 'DragStartEvent' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/KanbanBoard.tsx(15,10): error TS1484: 'JobStatus' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/KanbanBoard.tsx(15,21): error TS1484: 'Job' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/TodayFocus.tsx(3,10): error TS6133: 'isToday' is declared but its value is never read.
+src/store/useStore.ts(3,10): error TS1484: 'Job' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/store/useStore.ts(3,15): error TS1484: 'JobStatus' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/store/useStore.ts(3,26): error TS1484: 'UserStats' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
