@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic RAG Visualizer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Basic RAG System Explorer</h1>
+            <p>Understand how Retrieval-Augmented Generation works</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>1. Data Ingestion & Chunking</h2>
+                <p>We read your documents (PDF/DOCX) from the <code>data</code> folder, split them into chunks, and store them in a local ChromaDB.</p>
+                <div class="chunking-diagram">
+                    <div class="box doc">Original Document<br><small>(e.g., PRD)</small></div>
+                    <div class="arrow">→</div>
+                    <div class="box gears">Text Splitter<br><small>(Size 500, Overlap 50)</small></div>
+                    <div class="arrow">→</div>
+                    <div class="box chunks-box">
+                        <div class="chunk-item">Chunk 1</div>
+                        <div class="chunk-item">Chunk 2</div>
+                        <div class="chunk-item">Chunk ...</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="box db">ChromaDB<br><small>(Nomic Embeddings)</small></div>
+                </div>
+                <button id="ingestBtn" class="primary-btn">Ingest Documents</button>
+                <div id="ingestResult" class="result-box hidden"></div>
+            </section>
+
+            <section class="card">
+                <h2>2. Database Viewer</h2>
+                <button id="viewDbBtn" class="secondary-btn">View ChromaDB Contents</button>
+                <div id="dbView" class="db-view hidden">
+                    <h3>Stored Chunks (<span id="dbCount">0</span>)</h3>
+                    <div id="dbList" class="db-list"></div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>3. Ask a Question</h2>
+                <div class="query-area">
+                    <input type="text" id="queryInput" placeholder="E.g., What is the main feature of the Login Dashboard?">
+                    <button id="askBtn" class="primary-btn">Ask Question</button>
+                </div>
+                
+                <div id="queryProcess" class="query-process hidden">
+                    <h3>How it works:</h3>
+                    <div class="flow-diagram">
+                        <div class="step" id="step1">1. User Query</div>
+                        <div class="arrow">↓</div>
+                        <div class="step" id="step2">2. Embed Query (Nomic)</div>
+                        <div class="arrow">↓</div>
+                        <div class="step" id="step3">3. Search ChromaDB</div>
+                        <div class="arrow">↓</div>
+                        <div class="step" id="step4">4. Retrieve Closest Chunk</div>
+                        <div class="arrow">↓</div>
+                        <div class="step" id="step5">5. Groq Llama Synthesis</div>
+                    </div>
+                </div>
+
+                <div id="answerArea" class="answer-area hidden">
+                    <div class="retrieved-context">
+                        <h4>Retrieved Chunk from DB:</h4>
+                        <p id="contextText"></p>
+                    </div>
+                    <div class="final-answer">
+                        <h4>AI Answer:</h4>
+                        <p id="answerText"></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>

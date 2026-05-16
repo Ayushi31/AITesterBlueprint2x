@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced RAG Explorer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-box">A</div>
+                <div class="brand-text">
+                    <strong>Advanced RAG</strong><br>
+                    <span>EXPLORER</span>
+                </div>
+            </div>
+
+            <nav class="menu">
+                <a href="#" class="menu-item active" data-target="upload">Upload & Ingest</a>
+                <a href="#" class="menu-item" data-target="viewer">Chunks Viewer</a>
+                <a href="#" class="menu-item" data-target="chat">Chat</a>
+            </nav>
+
+            <div class="pipeline-section">
+                <div class="pipeline-header">PIPELINE</div>
+                
+                <!-- Upload Pipeline -->
+                <ul class="pipeline-steps" id="pipeline-upload">
+                    <li id="up-step-1" class="step">
+                        <div class="step-title">Read file</div>
+                        <div class="step-desc" id="up-desc-1"></div>
+                    </li>
+                    <li id="up-step-2" class="step">
+                        <div class="step-title">Build documents</div>
+                        <div class="step-desc" id="up-desc-2"></div>
+                    </li>
+                    <li id="up-step-3" class="step">
+                        <div class="step-title">Chunk</div>
+                        <div class="step-desc" id="up-desc-3"></div>
+                    </li>
+                    <li id="up-step-4" class="step">
+                        <div class="step-title">Embed (dense+sparse)</div>
+                        <div class="step-desc" id="up-desc-4"></div>
+                    </li>
+                    <li id="up-step-5" class="step">
+                        <div class="step-title">Index in Qdrant</div>
+                        <div class="step-desc" id="up-desc-5"></div>
+                    </li>
+                </ul>
+
+                <!-- Chat Pipeline -->
+                <ul class="pipeline-steps hidden" id="pipeline-chat">
+                    <li id="step-1" class="step">
+                        <div class="step-title">Question</div>
+                        <div class="step-desc" id="chat-desc-1"></div>
+                    </li>
+                    <li id="step-2" class="step">
+                        <div class="step-title">Query rewrite</div>
+                        <div class="step-desc" id="chat-desc-2"></div>
+                    </li>
+                    <li id="step-3" class="step">
+                        <div class="step-title">Embed queries</div>
+                        <div class="step-desc" id="chat-desc-3"></div>
+                    </li>
+                    <li id="step-4" class="step">
+                        <div class="step-title">Dense search</div>
+                        <div class="step-desc" id="chat-desc-4"></div>
+                    </li>
+                    <li id="step-5" class="step">
+                        <div class="step-title">Sparse search</div>
+                        <div class="step-desc" id="chat-desc-5"></div>
+                    </li>
+                    <li id="step-6" class="step">
+                        <div class="step-title">RRF fuse</div>
+                        <div class="step-desc" id="chat-desc-6"></div>
+                    </li>
+                    <li id="step-7" class="step">
+                        <div class="step-title">Cross-encoder rerank</div>
+                        <div class="step-desc" id="chat-desc-7"></div>
+                    </li>
+                    <li id="step-8" class="step">
+                        <div class="step-title">Groq generate</div>
+                        <div class="step-desc" id="chat-desc-8"></div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="stack-info">
+                <div>Embed: bge-m3 (Simulated)</div>
+                <div>DB: Qdrant (Simulated / Chroma)</div>
+                <div>Reranker: bge-reranker-v2-m3</div>
+                <div>LLM: openai/gpt-oss-120b</div>
+            </div>
+        </aside>
+
+        <!-- Right Content Area -->
+        <main class="main-content">
+            <!-- Upload View -->
+            <section id="upload-view" class="view-section active">
+                <h2>Stage 1 - Ingest your test cases</h2>
+                <p class="subtitle">Upload a CSV or Excel file of test cases. We'll show you how rows turn into chunks, how chunks turn into vectors, and how they land in Qdrant - every step.</p>
+                
+                <form id="upload-form">
+                    <div class="dropzone" id="dropzone" onclick="document.getElementById('file-upload').click()">
+                        <strong>Drop a CSV / XLSX here</strong>, or click to choose.<br>
+                        <small>Up to 200 MB · CSV, XLSX, XLS</small>
+                    </div>
+                    <input type="file" id="file-upload" accept=".csv, .xlsx" style="display:none" onchange="document.getElementById('file-name').textContent = this.files[0].name;">
+                    <div id="file-name" style="margin-bottom:16px;font-size:13px;color:#777;text-align:center;"></div>
+                    <button type="submit" class="btn primary-btn" id="btn-upload" style="width: auto;">Upload & preview</button>
+                </form>
+
+                <!-- Column picker (shown after file upload) -->
+                <div id="column-picker" class="hidden" style="margin-top: 30px;">
+                    <h3>1. Pick text columns</h3>
+                    <p style="font-size:13px; color:#777; margin-bottom:12px;">These columns are concatenated (with field labels) and embedded.</p>
+                    <div id="text-columns-grid" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;"></div>
+
+                    <h3>2. Pick metadata columns</h3>
+                    <p style="font-size:13px; color:#777; margin-bottom:12px;">Stored alongside each chunk for filtering & display (jira id, priority, module, etc.).</p>
+                    <div id="meta-columns-grid" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;"></div>
+
+                    <h3>3. Tunables</h3>
+                    <div style="display:flex; gap:16px; margin-bottom:16px;">
+                        <div class="input-group" style="flex:1; margin-bottom:0;">
+                            <label style="font-size:12px;color:#777;display:block;margin-bottom:4px;">Chunk size (chars)</label>
+                            <input type="number" id="chunk-size" value="1000">
+                        </div>
+                        <div class="input-group" style="flex:1; margin-bottom:0;">
+                            <label style="font-size:12px;color:#777;display:block;margin-bottom:4px;">Chunk overlap (chars)</label>
+                            <input type="number" id="chunk-overlap" value="150">
+                        </div>
+                    </div>
+                    <label style="font-size:13px; display:flex; align-items:center; gap:8px; margin-bottom:20px; cursor:pointer;">
+                        <input type="checkbox" id="drop-collection" checked> Drop & recreate the collection (start fresh)
+                    </label>
+
+                    <button class="btn primary-btn" id="btn-run-ingest" style="width: auto;">Run ingestion</button>
+                </div>
+
+                <!-- Chunks preview cards -->
+                <div id="ingest-chunks-preview" class="hidden" style="margin-top: 30px;"></div>
+
+                <!-- Progress bar -->
+                <div id="progress-container" class="hidden card" style="margin-top: 20px;">
+                    <h3>Embedding (bge-m3 · dense + sparse)</h3>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="embed-progress-bar"></div>
+                    </div>
+                    <small id="embed-progress-text" style="color:var(--text-secondary);font-size:12px;margin-top:8px;display:block;">0 / 0 chunks embedded</small>
+                </div>
+            </section>
+
+            <!-- Viewer View -->
+            <section id="viewer-view" class="view-section hidden">
+                <h2>Chunks in Qdrant</h2>
+                <p class="subtitle" id="viewer-subtitle" style="margin-bottom: 24px;">Total points: 0. Showing page 1 (50 per page).</p>
+                
+                <div class="card" style="margin-bottom: 24px; padding: 16px 24px;">
+                    <form id="filter-form" style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end;">
+                        <div class="input-group" style="flex:2; margin-bottom:0;">
+                            <label style="font-size:12px;color:#777;margin-bottom:4px;display:block;">Search text (substring)</label>
+                            <input type="text" id="filter-search" placeholder="e.g. heatmap, billing">
+                        </div>
+                        <div class="input-group" style="flex:1; margin-bottom:0;">
+                            <label style="font-size:12px;color:#777;margin-bottom:4px;display:block;">Priority</label>
+                            <select id="filter-priority" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; background:white;">
+                                <option value="">Any</option>
+                                <option value="P0">P0</option>
+                                <option value="P1">P1</option>
+                                <option value="P2">P2</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex:2; margin-bottom:0;">
+                            <label style="font-size:12px;color:#777;margin-bottom:4px;display:block;">Module</label>
+                            <input type="text" id="filter-module" placeholder="e.g. AB Testing">
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="submit" class="btn primary-btn" style="padding:10px 16px;">Filter</button>
+                            <button type="button" class="btn" id="btn-clear" style="padding:10px 16px; background:white; border:1px solid #ddd;">Clear</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="chunks-container" class="chunks-container">
+                    <p class="placeholder-text">Please upload data first to view chunks.</p>
+                </div>
+                
+                <div style="margin-top:20px; text-align: left;">
+                    <button class="btn primary-btn" id="btn-next-page" style="display:none; padding:10px 24px;">Next →</button>
+                </div>
+            </section>
+
+            <!-- Chat View -->
+            <section id="chat-view" class="view-section hidden">
+                <h2>Stage 2 - Ask the explorer</h2>
+                <p class="subtitle">Type a question. The left panel will light up step-by-step as the pipeline runs.</p>
+                
+                <div class="chat-stats" id="chat-stats">
+                    Collection <strong id="stat-points">0 points</strong> &nbsp;&nbsp; Top-N hybrid <strong id="stat-hybrid">20</strong> &nbsp;&nbsp; Top-K rerank <strong id="stat-rerank">4</strong>
+                </div>
+
+                <div class="chat-history" id="chat-history"></div>
+
+                <div class="chat-input-area">
+                    <form id="query-form" class="chat-form">
+                        <input type="text" id="user-query" placeholder="Ask about your test cases, or 'create a new test case for VWO-1234'..." required autocomplete="off">
+                        
+                        <div class="chat-controls">
+                            <label class="checkbox-label"><input type="checkbox" id="opt-rewrite" checked> Query rewrite</label>
+                            <label class="checkbox-label"><input type="checkbox" id="opt-reranker" checked> Re-ranker</label>
+                            <label class="number-label">top-N <input type="number" id="top-n" value="20"></label>
+                            <label class="number-label">top-K <input type="number" id="top-k" value="4"></label>
+                            
+                            <button type="submit" class="btn send-btn" id="btn-query">Ask</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
