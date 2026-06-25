@@ -9,3 +9,26 @@ __pycache__/
 chroma_db/
 */chroma_db/
 **/*/chroma_db/
+
+# Virtual Environments
+.venv/
+*/.venv/
+**/*/.venv/
+
+# Node modules
+node_modules/
+*/node_modules/
+**/*/node_modules/
+
+# Build artifacts
+dist/
+*/dist/
+**/*/dist/
+
+# Temporary and scratch files
+.tmp/
+*/.tmp/
+**/*/.tmp/
+scratch/
+*/scratch/
+**/*/scratch/
