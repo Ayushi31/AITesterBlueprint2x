@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Download, MessageCircle, FileText, Share, Loader2, ChevronDown, ChevronUp, Info } from 'lucide-react';
 import axios from 'axios';
 import { exportToCSV, exportToMarkdown, exportToWhatsApp } from '../utils/exportUtils';
+import { API_BASE_URL } from '../config';
 
 interface ExportPanelProps {
   testCases: any[];
@@ -29,7 +30,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ testCases, projectKey 
     setPushResult('');
 
     try {
-      const response = await axios.post('http://localhost:8000/testcases/push-xray', {
+      const response = await axios.post(`${API_BASE_URL}/testcases/push-xray`, {
         test_cases: testCases,
         client_id: xrayClientId,
         client_secret: xrayClientSecret,

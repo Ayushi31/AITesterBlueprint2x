@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 interface JiraConnectionProps {
   onConnect: (credentials: any) => void;
@@ -18,7 +19,7 @@ export const JiraConnection: React.FC<JiraConnectionProps> = ({ onConnect }) => 
     e.preventDefault();
     setStatus('testing');
     try {
-      const response = await axios.post('http://localhost:8000/jira/test-connection', {
+      const response = await axios.post(`${API_BASE_URL}/jira/test-connection`, {
         base_url: baseUrl,
         email: email,
         api_token: apiToken

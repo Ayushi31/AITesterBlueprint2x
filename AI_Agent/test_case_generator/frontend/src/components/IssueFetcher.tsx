@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Search, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 interface IssueFetcherProps {
   credentials: any;
@@ -19,7 +20,7 @@ export const IssueFetcher: React.FC<IssueFetcherProps> = ({ credentials, onIssue
     setError('');
     setIssue(null);
     try {
-      const response = await axios.post('http://localhost:8000/jira/fetch-issue', {
+      const response = await axios.post(`${API_BASE_URL}/jira/fetch-issue`, {
         issue_id: issueId,
         base_url: credentials.baseUrl,
         email: credentials.email,

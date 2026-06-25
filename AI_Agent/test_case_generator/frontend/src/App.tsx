@@ -5,6 +5,7 @@ import { IssueFetcher } from './components/IssueFetcher';
 import { TestCaseTable } from './components/TestCaseTable';
 import { ExportPanel } from './components/ExportPanel';
 import { Loader2, Beaker, Wand2 } from 'lucide-react';
+import { API_BASE_URL } from './config';
 
 function App() {
   const [credentials, setCredentials] = useState<any>(null);
@@ -23,7 +24,7 @@ function App() {
     setTestingLlm(true);
     setLlmMessage('');
     try {
-      const response = await axios.post('http://localhost:8000/testcases/test-llm-connection', {
+      const response = await axios.post(`${API_BASE_URL}/testcases/test-llm-connection`, {
         api_key: apiKey
       });
       if (response.data.status === 'success') {
@@ -44,7 +45,7 @@ function App() {
     setGenerating(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:8000/testcases/generate', {
+      const response = await axios.post(`${API_BASE_URL}/testcases/generate`, {
         issue_data: issueData,
         template: template,
         llm_provider: 'groq',
